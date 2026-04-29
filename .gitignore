@@ -1,0 +1,80 @@
+# -----------------------------------------------------------------------
+# .gitignore — recommended for projects using graphify (safishamsi/graphify)
+# Based on official docs: https://github.com/safishamsi/graphify
+# -----------------------------------------------------------------------
+
+# ── graphify outputs ────────────────────────────────────────────────────
+# Cache is mtime-based and invalid after git clone — always ignore
+graphify-out/cache/
+# Local token tracking — not useful to share
+graphify-out/cost.json
+# Optional: commit graphify-out/ for shared extraction speed (so teammates
+# get GRAPH_REPORT.md without re-running). If you prefer a lean repo,
+# add the line below instead and everyone runs /graphify themselves.
+# graphify-out/
+
+.codex
+
+# ── Dependencies ────────────────────────────────────────────────────────
+node_modules/
+vendor/
+.venv/
+venv/
+env/
+
+# ── Build & dist ────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+target/
+
+# ── Platform / AI assistant install files ───────────────────────────────
+# Uncomment whichever platforms you use locally but don't want committed
+# .claude/
+# .codex/
+# .cursor/
+# .gemini/
+# skills/
+
+# ── graphify internal state (if present at repo root) ───────────────────
+.graphify/
+.graphify_*.json
+.graphify_python
+
+# ── Package manager lock files ──────────────────────────────────────────
+# (keep if your team commits locks; remove these lines if so)
+# package-lock.json
+# yarn.lock
+# uv.lock
+
+# ── IDE / editor ────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+
+# ── OS noise ────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Environment & secrets ───────────────────────────────────────────────
+.env
+.env.*
+*.pem
+*.key
+
+# ── Python ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# ── Local benchmark scripts (per graphify's own .gitignore) ─────────────
+scripts/run_k2_*.py
+scripts/llm.py
+scripts/benchmark_kimi*.json
