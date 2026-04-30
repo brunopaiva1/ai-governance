@@ -1,0 +1,155 @@
+So I would love if you could you touched on this but but just describe in a little bit
+more detail how and why you felt like you had to move from a nonprofit structure to
+a for-profit structure and like was that like a light bulb going off. The simple thing was
+we just needed vastly more capital than we thought we could attract isn't not that we thought
+we tried yeah that we were able to attract is a nonprofit you know we knew that
+scaling computers was going to be important but we still really underestimated how much
+we need to scale them. So does that suggest that nobody can do AI as a nonprofit in any kind
+of a meaningful way? No there are other things that you can do for sure but to be at the
+front of scaling research I think you probably can't do that as a nonprofit. What about
+as government? Government could do anything they wanted right? Right well but yes and no so
+again one of the things we try and pick at is that there's some things that firms are much better
+than government so I mean do you think the Department of Energy or the Department of Defense could
+do open AI as well as you guys do? So the Apollo program was pretty impressive. So do you think
+that could possibly be another route? I think you know in some sense in a well-functioning
+society I think this would be a government project. But given that's not happening I think it's
+better that it happens this way and happens you know like as an American project. Okay you also
+then said a couple of times that there's a role for the government or you I think use the word
+society to play in setting some of the guardrails or in directing things so that equity is built in.
+More than a role like maybe that's like society should play the role there. But how does that
+like society's not like a thing? No it's a complex negotiation of a lot of different stakeholders
+but we kind of do that we know we do this we get this right over time. Give me an example how do we
+get it right? Air planes are really safe. Boeing problems aside in general airplanes have been remarkably
+safe. That happened largely as a result of kind of old-fashioned regulation. I would say it happened
+because people want to get in an airplane. I know that they're not going to die and society responds
+to that. Well specifically government responds. Airplane manufacturers also if they want to keep
+selling airplanes that people want to get on. Definitely governments have a role. The scientists
+and engineers working on it feel a sense of obligation. I think it is a multi-party thing but there's
+a huge role for regulation for sure. And how are you you're clearly going to be the
+a player in this game as an unfolds a big player. I put money on it. So how are you thinking about it
+and I compare it a little bit having been at HBS when the internet happened. Sort of the folks who
+were you and the social media and the internet were happening. We're saying no government. Cyber
+space wants to be free. Keep the black helicopters out of our business. How are you thinking
+about sort of your position vis-a-vis the government. I mean I hope it's like a real
+partnership. It's been fairly constructive so far. Too much
+regulation clearly slows innovation. Not enough clearly leads to a whole set of other problems.
+Everyone agrees I think on those two statements. And then there's just a question of where
+you where you should be on that spectrum. And do you think there's particular parts of the government
+that I know you're working with DHS but DOE, DOD I mean where would you most like to build bridges.
+I mean yeah I look at it easy to be too optimistic and to drink the Kool-Aid too much in this but
+I think this is going to touch like all parts of society and not all parts of government.
+But those are hard things to to build. For sure and but you know like the internet
+touched all parts of society pretty much. Right. But arguably we got some parts of that really
+well. I was going to say we got a lot of that wrong. We got some parts right and I don't think
+most people would say under the internet even with all of the problems. Yeah but it's kind of
+interesting watching my students. A lot of them having grown up on social media would like that
+part of the internet to go away. For sure and there will be parts of AI that you will you would
+like to go away. But how many of your students would push a button and like destroy all computers
+the entire internet. Oh not. So there will be parts you don't like, there will be parts of your
+students 10 years from now on like either. Yeah. But on the whole. Yeah. I think it'll be a huge
+net win. And so and some of the students ask you this but maybe I'll ask you to go a little deeper
+in it. If you think about from either the societal perspective or the commercial perspective
+what are the pieces of AI that you're most excited about? Personally I think greatly increasing
+the rate of scientific discovery is what I'm most excited about. I believe that that is
+if you zoom all the way out that is how the world gets sustainably better.
+And I think doing more of that is awesome. A lot of other areas too. I think there'll be incredible
+AI tutors, incredible AI medical advisors. But but personally speaking I'm so excited for
+AI for science. Yeah. Any particular parts of science? I mean I guess if I had one personal
+thing to pick I would say like you know go solve all of physics but no I'm excited for it everywhere.
+So why all of physics? I have incredible personal curiosity and I also believe that
+you know the more we can understand about physics the more we can manipulate the universe and
+I don't know a little comma but it seems probably important to find out. So then the obvious question
+what happens to the physicists? I was being a little facetious there. If there's truly no problems
+left in physics at all then I don't know. What I suspect is that we answer the current questions
+and find more and harder and more interesting problems. So have you read this piece by John
+Maynard Cain's Economic Prospects for our grandchildren? No. Okay we have to send it to you.
+Okay. It's brilliant. So Cain's wrote it in 1930 and he's talking about what the world is going
+to look like a hundred years ago. Oh I know. You must. Yeah. I did not tell you. Yeah. Because he you know
+it's this similar set of issues that once you solve all the problems and he comes up with sort
+of a weird answer to it that we're just going to make art and not care about money. I mean do
+do you think about those kinds of existential questions? What happens to the physicists? What's
+happens? You know everybody has been debating this for a long time and he was I think sort of
+right and sort of wrong. There is some sense in which you could go back to the 1930s and look at a
+lot of people today. You would say they are just making art and they don't care about money. They're
+all fine but that's not their experience of it. If you could look at the people today and go
+forward another hundred years and ask them what they think about those people at the future's jobs
+will say you know some weird definition of art but okay they're making art and none of them care
+about money. They have unbelievable material abundance and you think a little bit harder and say well
+they seem busy and stressed and they seem to be getting a great deal of satisfaction out of the
+work they're doing and they don't quite call it art and you know they still feel like they don't
+have enough and they want more and they're still finding new ways to compare each other compare
+with each other and you know maybe they're now instead of like looking at whether their house is
+bigger or smaller than their neighbors they're looking at whether they own a nicer galaxy or less
+of a nice one than their neighbors but I think the human drives are just going to keep going.
+Human nature doesn't I don't think so. Doesn't seem to change. So one of the things I write about
+in my weird books is the prediction that we're going to follow in love with robots which is an
+exaggerated version of what I actually do think is true that we are going to embrace AI entities
+as emotional companions. What's your sense I mean are you a fan of the kind of
+singularity type vision where there is this merging and we start to build emotional connections
+with things that are created rather than born. Yeah I suspect that entertainment
+in the future will look quite different and maybe it does you know maybe a lot of the time spent
+watching TV or playing video games today is replaced with an interactive experience with AI's
+and we probably do derive some version of companionship from that but for most of us I think
+the premium on you know the real human authentic version of it goes up, not down
+in that kind of a world so I'm sure we'll be talking to AI's a lot and I'm sure it'll be a
+fantastically entertaining world but I would bet that there's something deep about human nature
+where just the knowledge that it's another real person or not really matters. Although sometimes
+you know I talk to some of the people I care about the most entirely through text because we're
+sure in the same city so I might not know if they were being replaced or I might find with that if
+they were dead. Well that's the question if you knew it was not a real person behind it would you
+feel any different right and I would posit that you would yeah we're gonna find out right we're going
+to find out but I think you will okay I wish we should make a bet on it and you know I would be happy
+to see a hundred years from now. I give you nice odds okay so I want to go back to one other one
+other piece of that you raised in your talk earlier use the one of the kids asked the question about
+equity yeah and and you had a very nice answer that which I agree with that that this the
+technology is probably going to drive to equity but it's going to need some nudging kind of
+nudging do you have in mind well first of all I think it may not need any nudging at all sometimes
+technology doesn't and I also think that knowing the right kind of nudging academically is hard to do
+you kind of have to do it experientially like I'm sure all of my ideas right now are totally wrong
+I think I think a tight feedback loop and watching where the problems are being created fixing those
+finding the new problems that's kind of how I believe we'll have to do the nudging although it's
+hard right I mean like I just come back from Denmark you can see doing that in a country like Denmark
+small they have really good data like for you at weight you know US takes 30 years to pass any kind
+of regulations so how do you how do you think about that nudging I mean I hope the companies will do it
+okay okay I think yeah if you if you're relying on US regulation that would be but you have I actually
+taught your piece last night two minutes ago the Moore's Law for everything I've been read that in a while
+how did it hold up no I think it's quite I thought it was very interesting you know because you're
+talking about changes in the taxation system yeah which are not particularly far-fetched I mean they're
+doable yeah they're doable in the current political situations a different question but you know
+basically talking about it you know attacks on land and and and and technology basically yeah
+companies I mean I like it yeah have you would you still oh I still think that's right for sure I just
+I don't remember all uh no I think that I think that in a world of AI um taxing income
+and corporate profits primarily is not quite right yeah like we do need to switch to a tax
+on capital somehow it seems to me yeah no I think that's I mean I just a really interesting idea
+that hasn't gotten sufficient track because it's different than a UBI I mean it's connected in some
+ways but it's different if you had one wish for AI what would it be love humanity can you build that
+in I think so like how do you try one of the things that has worked surprisingly well is the ability
+to align an AI system to break behave in a particular way and so if we can articulate
+what that means in a bunch of different cases then I yeah I think we can get the system back though I
+do you think open AI can and should like have the power to make its own rules like should why
+should we trust you you should I don't think you should okay I don't think we do I don't think we
+will I don't think we should yeah so I'm not by the way that does not necessarily mean that
+the right thing to do is to hand it over to like a government bureaucrat either one of the the
+directional kind of thing that I think is interesting is you could imagine one of these systems chatting
+with all of its users saying explain to me your value system and then I'm going to collectively align
+across that I am a believer that the users of technology the people impacted by it the most deserve
+the lot of say in its governance so you could do something like that I mean is that feasible especially
+again given the vast sums of money totally feasible like again I think that's really a new thing
+that is enabled by this technology that just wasn't possible before okay so is that something like
+what anthropic is pushing towards I don't know what they're doing I'm not I'm not sure no because I
+mean they had this sort of seemed a little a little naive the idea you know we're gonna put our
+design principles out there for kind of crowdsourcing what I was thinking I mean I think it's very good
+to say here's how we're making these trade-offs of what a system will do and not do but what I was
+saying what I meant more is I'm interested in the thought experiment of an AI chats with you for
+a couple of hours about your value system and does that with me and with everybody else and then
+says okay I can't make everybody happy all the time so it's essentially sort of using AI to come up
+with a consensus well using AI to talk to everybody to understand the consensus at a deep level of
+billions of people okay which we can't do without AI probably okay but it would we just be
+interesting to line up something like that against kind of the foundation founding documents
+of this country yeah which are explicitly for better or worse against majority rule now what
+you're describing is different but I guess foundational pretty quick well but it is fundamentally
+about democracy with some power checks on it yeah yeah you have to think about what those look
+for sure yeah so if if the consensus is that it's bad AI you know that it's evil sort of how
+do you come up with the checks well I think that should be part of like what people should vote on
+for the governance structure yeah yeah awesome thank you thank you you've got to go be pitched
+all right thank you so much
