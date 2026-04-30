@@ -1,3 +1,5 @@
+![Mapeamento de Governança via GraphRAG](img/banner.jpeg)
+
 # Governança e Ética de Dados em IA
 
 ## Membros do Grupo
