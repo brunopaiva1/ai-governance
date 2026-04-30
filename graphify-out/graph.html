@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>graphify - graphify-out/graph.html</title>
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0f1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
+  #graph { flex: 1; }
+  #sidebar { width: 280px; background: #1a1a2e; border-left: 1px solid #2a2a4e; display: flex; flex-direction: column; overflow: hidden; }
+  #search-wrap { padding: 12px; border-bottom: 1px solid #2a2a4e; }
+  #search { width: 100%; background: #0f0f1a; border: 1px solid #3a3a5e; color: #e0e0e0; padding: 7px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+  #search:focus { border-color: #4E79A7; }
+  #search-results { max-height: 140px; overflow-y: auto; padding: 4px 12px; border-bottom: 1px solid #2a2a4e; display: none; }
+  .search-item { padding: 4px 6px; cursor: pointer; border-radius: 4px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .search-item:hover { background: #2a2a4e; }
+  #info-panel { padding: 14px; border-bottom: 1px solid #2a2a4e; min-height: 140px; }
+  #info-panel h3 { font-size: 13px; color: #aaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  #info-content { font-size: 13px; color: #ccc; line-height: 1.6; }
+  #info-content .field { margin-bottom: 5px; }
+  #info-content .field b { color: #e0e0e0; }
+  #info-content .empty { color: #555; font-style: italic; }
+  .neighbor-link { display: block; padding: 2px 6px; margin: 2px 0; border-radius: 3px; cursor: pointer; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid #333; }
+  .neighbor-link:hover { background: #2a2a4e; }
+  #neighbors-list { max-height: 160px; overflow-y: auto; margin-top: 4px; }
+  #legend-wrap { flex: 1; overflow-y: auto; padding: 12px; }
+  #legend-wrap h3 { font-size: 13px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .legend-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; border-radius: 4px; font-size: 12px; }
+  .legend-item:hover { background: #2a2a4e; padding-left: 4px; }
+  .legend-item.dimmed { opacity: 0.35; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .legend-count { color: #666; font-size: 11px; }
+  #stats { padding: 10px 14px; border-top: 1px solid #2a2a4e; font-size: 11px; color: #555; }
+</style>
+</head>
+<body>
+<div id="graph"></div>
+<div id="sidebar">
+  <div id="search-wrap">
+    <input id="search" type="text" placeholder="Search nodes..." autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+  <div id="info-panel">
+    <h3>Node Info</h3>
+    <div id="info-content"><span class="empty">Click a node to inspect it</span></div>
+  </div>
+  <div id="legend-wrap">
+    <h3>Communities</h3>
+    <div id="legend"></div>
+  </div>
+  <div id="stats">44 nodes &middot; 46 edges &middot; 6 communities</div>
+</div>
+<script>
+const RAW_NODES = [{"id": "mckinsey_generative_ai", "label": "Generative AI", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Generative AI", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 3}, {"id": "mckinsey_foundation_models", "label": "Foundation Models", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Foundation Models", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "mckinsey_productivity_value", "label": "Generative AI Productivity Value", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Generative AI Productivity Value", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 5}, {"id": "mckinsey_use_case_lens", "label": "Use Case Lens", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Use Case Lens", "community": 5, "community_name": "Business Use Cases", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 5}, {"id": "mckinsey_work_activity_lens", "label": "Work Activity Lens", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Work Activity Lens", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 2}, {"id": "mckinsey_customer_operations", "label": "Customer Operations", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Customer Operations", "community": 5, "community_name": "Business Use Cases", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "mckinsey_marketing_sales", "label": "Marketing and Sales", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Marketing and Sales", "community": 5, "community_name": "Business Use Cases", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "mckinsey_software_engineering", "label": "Software Engineering", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Software Engineering", "community": 5, "community_name": "Business Use Cases", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "mckinsey_research_development", "label": "Research and Development", "color": {"background": "#EDC948", "border": "#EDC948", "highlight": {"background": "#ffffff", "border": "#EDC948"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Research and Development", "community": 5, "community_name": "Business Use Cases", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "mckinsey_workforce_transformation", "label": "Workforce Transformation", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Workforce Transformation", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 3}, {"id": "mckinsey_responsible_ai_risks", "label": "Responsible AI Risks", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 34.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Responsible AI Risks", "community": 2, "community_name": "Responsible AI Controls", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 4}, {"id": "mckinsey_rationale_two_lenses", "label": "Rationale for Two Complementary Impact Lenses", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Rationale for Two Complementary Impact Lenses", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "mckinsey_rationale_human_in_loop", "label": "Rationale for Human-in-the-Loop Checks", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Rationale for Human-in-the-Loop Checks", "community": 2, "community_name": "Responsible AI Controls", "source_file": "raw/The economic potential of generative AI The next productivity frontier.md", "file_type": "document", "degree": 1}, {"id": "data_governance_role_ai", "label": "Role of AI in Enhancing Data Governance Strategies", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Role of AI in Enhancing Data Governance Strategies", "community": 2, "community_name": "Responsible AI Controls", "source_file": "raw/View of The Role of AI in Enhancing Data Governance Strategies.md", "file_type": "document", "degree": 1}, {"id": "goldman_generative_ai", "label": "Generative AI", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Generative AI", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 2}, {"id": "goldman_task_automation", "label": "Task Automation", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Task Automation", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 3}, {"id": "goldman_labor_market_disruption", "label": "Labor Market Disruption", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 34.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Labor Market Disruption", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 4}, {"id": "goldman_productivity_growth_boost", "label": "Productivity Growth Boost", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 34.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Productivity Growth Boost", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 4}, {"id": "goldman_onet_methodology", "label": "O*NET Automation Methodology", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "O*NET Automation Methodology", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 3}, {"id": "goldman_job_exposure_estimates", "label": "Job Exposure Estimates", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Job Exposure Estimates", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 1}, {"id": "goldman_new_job_creation", "label": "New Job Creation", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "New Job Creation", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 2}, {"id": "goldman_adoption_timeline_uncertainty", "label": "Adoption Timeline Uncertainty", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Adoption Timeline Uncertainty", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 1}, {"id": "goldman_global_gdp_increase", "label": "Global GDP Increase", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Global GDP Increase", "community": 0, "community_name": "Economic Impact", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 1}, {"id": "goldman_rationale_onet_method", "label": "Rationale for O*NET Automation Method", "color": {"background": "#76B7B2", "border": "#76B7B2", "highlight": {"background": "#ffffff", "border": "#76B7B2"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Rationale for O*NET Automation Method", "community": 3, "community_name": "Automation Methodology", "source_file": "raw/The Potentially Large Effects of Artificial Intelligence on Economic Growth (BriggsKodnani).md", "file_type": "document", "degree": 1}, {"id": "ibm_ai_ethics", "label": "AI Ethics", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "AI Ethics", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 2}, {"id": "ibm_consent_based_ai", "label": "Consent-Based AI", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Consent-Based AI", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 1}, {"id": "ibm_diversity_inclusivity", "label": "Diversity and Inclusivity", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Diversity and Inclusivity", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 3}, {"id": "ibm_sociotechnical_trust", "label": "Sociotechnical Trust in AI", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Sociotechnical Trust in AI", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 3}, {"id": "ibm_design_thinking", "label": "Design Thinking for AI", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Design Thinking for AI", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 2}, {"id": "ibm_tech_ethics_by_design", "label": "Tech Ethics by Design", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Tech Ethics by Design", "community": 2, "community_name": "Responsible AI Controls", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 5}, {"id": "ibm_layers_of_effect", "label": "Layers of Effect", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Layers of Effect", "community": 2, "community_name": "Responsible AI Controls", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 1}, {"id": "ibm_dichotomy_mapping", "label": "Dichotomy Mapping", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Dichotomy Mapping", "community": 2, "community_name": "Responsible AI Controls", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 1}, {"id": "ibm_ethical_hacking", "label": "Ethical Hacking", "color": {"background": "#E15759", "border": "#E15759", "highlight": {"background": "#ffffff", "border": "#E15759"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Ethical Hacking", "community": 2, "community_name": "Responsible AI Controls", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 1}, {"id": "ibm_rationale_diverse_teams", "label": "Rationale for Diverse AI Teams", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Rationale for Diverse AI Teams", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt", "file_type": "document", "degree": 1}, {"id": "openai_governance_interview", "label": "OpenAI Governance Interview", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 40.0, "font": {"size": 12, "color": "#ffffff"}, "title": "OpenAI Governance Interview", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 5}, {"id": "openai_nonprofit_to_for_profit", "label": "Nonprofit to For-Profit Structure", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Nonprofit to For-Profit Structure", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 3}, {"id": "openai_scaling_research_capital", "label": "Scaling Research Capital Needs", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Scaling Research Capital Needs", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 1}, {"id": "openai_government_guardrails", "label": "Government and Society Guardrails", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Government and Society Guardrails", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 2}, {"id": "openai_scientific_discovery", "label": "AI for Scientific Discovery", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "AI for Scientific Discovery", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 1}, {"id": "openai_equity_feedback_nudging", "label": "Equity Nudging Through Feedback Loops", "color": {"background": "#59A14F", "border": "#59A14F", "highlight": {"background": "#ffffff", "border": "#59A14F"}}, "size": 22.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Equity Nudging Through Feedback Loops", "community": 4, "community_name": "AI Ethics Practice", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 2}, {"id": "openai_value_consensus_governance", "label": "Value Consensus Governance", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 28.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Value Consensus Governance", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 3}, {"id": "openai_tax_on_capital", "label": "Tax on Capital", "color": {"background": "#4E79A7", "border": "#4E79A7", "highlight": {"background": "#ffffff", "border": "#4E79A7"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Tax on Capital", "community": 0, "community_name": "Economic Impact", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 1}, {"id": "openai_love_humanity_alignment", "label": "Love Humanity Alignment Goal", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Love Humanity Alignment Goal", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 1}, {"id": "openai_rationale_for_profit", "label": "Rationale for For-Profit Structure", "color": {"background": "#F28E2B", "border": "#F28E2B", "highlight": {"background": "#ffffff", "border": "#F28E2B"}}, "size": 16.0, "font": {"size": 12, "color": "#ffffff"}, "title": "Rationale for For-Profit Structure", "community": 1, "community_name": "OpenAI Governance", "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt", "file_type": "document", "degree": 1}];
+const RAW_EDGES = [{"from": "mckinsey_generative_ai", "to": "mckinsey_foundation_models", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_generative_ai", "to": "mckinsey_productivity_value", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_generative_ai", "to": "goldman_generative_ai", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "mckinsey_productivity_value", "to": "mckinsey_use_case_lens", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_productivity_value", "to": "mckinsey_work_activity_lens", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_productivity_value", "to": "mckinsey_rationale_two_lenses", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_productivity_value", "to": "goldman_productivity_growth_boost", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "mckinsey_use_case_lens", "to": "mckinsey_customer_operations", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_use_case_lens", "to": "mckinsey_marketing_sales", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_use_case_lens", "to": "mckinsey_software_engineering", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_use_case_lens", "to": "mckinsey_research_development", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_work_activity_lens", "to": "mckinsey_workforce_transformation", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_workforce_transformation", "to": "mckinsey_responsible_ai_risks", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_workforce_transformation", "to": "goldman_labor_market_disruption", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "mckinsey_responsible_ai_risks", "to": "mckinsey_rationale_human_in_loop", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "mckinsey_responsible_ai_risks", "to": "data_governance_role_ai", "label": "conceptually_related_to", "title": "conceptually_related_to [AMBIGUOUS]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "AMBIGUOUS"}, {"from": "mckinsey_responsible_ai_risks", "to": "ibm_tech_ethics_by_design", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "goldman_generative_ai", "to": "goldman_task_automation", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_task_automation", "to": "goldman_labor_market_disruption", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_task_automation", "to": "goldman_onet_methodology", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_labor_market_disruption", "to": "goldman_new_job_creation", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_labor_market_disruption", "to": "openai_tax_on_capital", "label": "conceptually_related_to", "title": "conceptually_related_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "goldman_productivity_growth_boost", "to": "goldman_new_job_creation", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_productivity_growth_boost", "to": "goldman_global_gdp_increase", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_productivity_growth_boost", "to": "goldman_adoption_timeline_uncertainty", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_onet_methodology", "to": "goldman_job_exposure_estimates", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "goldman_onet_methodology", "to": "goldman_rationale_onet_method", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_ai_ethics", "to": "ibm_consent_based_ai", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_ai_ethics", "to": "ibm_diversity_inclusivity", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_diversity_inclusivity", "to": "ibm_sociotechnical_trust", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_diversity_inclusivity", "to": "ibm_rationale_diverse_teams", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_sociotechnical_trust", "to": "ibm_design_thinking", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_sociotechnical_trust", "to": "openai_equity_feedback_nudging", "label": "semantically_similar_to", "title": "semantically_similar_to [INFERRED]", "dashes": true, "width": 1, "color": {"opacity": 0.35}, "confidence": "INFERRED"}, {"from": "ibm_design_thinking", "to": "ibm_tech_ethics_by_design", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_tech_ethics_by_design", "to": "ibm_layers_of_effect", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_tech_ethics_by_design", "to": "ibm_dichotomy_mapping", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "ibm_tech_ethics_by_design", "to": "ibm_ethical_hacking", "label": "implements", "title": "implements [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_governance_interview", "to": "openai_nonprofit_to_for_profit", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_governance_interview", "to": "openai_government_guardrails", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_governance_interview", "to": "openai_scientific_discovery", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_governance_interview", "to": "openai_equity_feedback_nudging", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_governance_interview", "to": "openai_value_consensus_governance", "label": "references", "title": "references [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_nonprofit_to_for_profit", "to": "openai_scaling_research_capital", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_nonprofit_to_for_profit", "to": "openai_rationale_for_profit", "label": "rationale_for", "title": "rationale_for [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_government_guardrails", "to": "openai_value_consensus_governance", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}, {"from": "openai_value_consensus_governance", "to": "openai_love_humanity_alignment", "label": "conceptually_related_to", "title": "conceptually_related_to [EXTRACTED]", "dashes": false, "width": 2, "color": {"opacity": 0.7}, "confidence": "EXTRACTED"}];
+const LEGEND = [{"cid": 0, "color": "#4E79A7", "label": "Economic Impact", "count": 10}, {"cid": 1, "color": "#F28E2B", "label": "OpenAI Governance", "count": 8}, {"cid": 2, "color": "#E15759", "label": "Responsible AI Controls", "count": 7}, {"cid": 3, "color": "#76B7B2", "label": "Automation Methodology", "count": 7}, {"cid": 4, "color": "#59A14F", "label": "AI Ethics Practice", "count": 7}, {"cid": 5, "color": "#EDC948", "label": "Business Use Cases", "count": 5}];
+
+// HTML-escape helper — prevents XSS when injecting graph data into innerHTML
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Build vis datasets
+const nodesDS = new vis.DataSet(RAW_NODES.map(n => ({
+  id: n.id, label: n.label, color: n.color, size: n.size,
+  font: n.font, title: n.title,
+  _community: n.community, _community_name: n.community_name,
+  _source_file: n.source_file, _file_type: n.file_type, _degree: n.degree,
+})));
+
+const edgesDS = new vis.DataSet(RAW_EDGES.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  label: '',
+  title: e.title,
+  dashes: e.dashes,
+  width: e.width,
+  color: e.color,
+  arrows: { to: { enabled: true, scaleFactor: 0.5 } },
+})));
+
+const container = document.getElementById('graph');
+const network = new vis.Network(container, { nodes: nodesDS, edges: edgesDS }, {
+  physics: {
+    enabled: true,
+    solver: 'forceAtlas2Based',
+    forceAtlas2Based: {
+      gravitationalConstant: -60,
+      centralGravity: 0.005,
+      springLength: 120,
+      springConstant: 0.08,
+      damping: 0.4,
+      avoidOverlap: 0.8,
+    },
+    stabilization: { iterations: 200, fit: true },
+  },
+  interaction: {
+    hover: true,
+    tooltipDelay: 100,
+    hideEdgesOnDrag: true,
+    navigationButtons: false,
+    keyboard: false,
+  },
+  nodes: { shape: 'dot', borderWidth: 1.5 },
+  edges: { smooth: { type: 'continuous', roundness: 0.2 }, selectionWidth: 3 },
+});
+
+network.once('stabilizationIterationsDone', () => {
+  network.setOptions({ physics: { enabled: false } });
+});
+
+function showInfo(nodeId) {
+  const n = nodesDS.get(nodeId);
+  if (!n) return;
+  const neighborIds = network.getConnectedNodes(nodeId);
+  const neighborItems = neighborIds.map(nid => {
+    const nb = nodesDS.get(nid);
+    const color = nb ? nb.color.background : '#555';
+    return `<span class="neighbor-link" style="border-left-color:${esc(color)}" onclick="focusNode(${JSON.stringify(nid)})">${esc(nb ? nb.label : nid)}</span>`;
+  }).join('');
+  document.getElementById('info-content').innerHTML = `
+    <div class="field"><b>${esc(n.label)}</b></div>
+    <div class="field">Type: ${esc(n._file_type || 'unknown')}</div>
+    <div class="field">Community: ${esc(n._community_name)}</div>
+    <div class="field">Source: ${esc(n._source_file || '-')}</div>
+    <div class="field">Degree: ${n._degree}</div>
+    ${neighborIds.length ? `<div class="field" style="margin-top:8px;color:#aaa;font-size:11px">Neighbors (${neighborIds.length})</div><div id="neighbors-list">${neighborItems}</div>` : ''}
+  `;
+}
+
+function focusNode(nodeId) {
+  network.focus(nodeId, { scale: 1.4, animation: true });
+  network.selectNodes([nodeId]);
+  showInfo(nodeId);
+}
+
+// Track hovered node — hover detection is more reliable than click params
+let hoveredNodeId = null;
+network.on('hoverNode', params => {
+  hoveredNodeId = params.node;
+  container.style.cursor = 'pointer';
+});
+network.on('blurNode', () => {
+  hoveredNodeId = null;
+  container.style.cursor = 'default';
+});
+container.addEventListener('click', () => {
+  if (hoveredNodeId !== null) {
+    showInfo(hoveredNodeId);
+    network.selectNodes([hoveredNodeId]);
+  }
+});
+network.on('click', params => {
+  if (params.nodes.length > 0) {
+    showInfo(params.nodes[0]);
+  } else if (hoveredNodeId === null) {
+    document.getElementById('info-content').innerHTML = '<span class="empty">Click a node to inspect it</span>';
+  }
+});
+
+const searchInput = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  searchResults.innerHTML = '';
+  if (!q) { searchResults.style.display = 'none'; return; }
+  const matches = RAW_NODES.filter(n => n.label.toLowerCase().includes(q)).slice(0, 20);
+  if (!matches.length) { searchResults.style.display = 'none'; return; }
+  searchResults.style.display = 'block';
+  matches.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'search-item';
+    el.textContent = n.label;
+    el.style.borderLeft = `3px solid ${n.color.background}`;
+    el.style.paddingLeft = '8px';
+    el.onclick = () => {
+      network.focus(n.id, { scale: 1.5, animation: true });
+      network.selectNodes([n.id]);
+      showInfo(n.id);
+      searchResults.style.display = 'none';
+      searchInput.value = '';
+    };
+    searchResults.appendChild(el);
+  });
+});
+document.addEventListener('click', e => {
+  if (!searchResults.contains(e.target) && e.target !== searchInput)
+    searchResults.style.display = 'none';
+});
+
+const hiddenCommunities = new Set();
+const legendEl = document.getElementById('legend');
+LEGEND.forEach(c => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `<div class="legend-dot" style="background:${c.color}"></div>
+    <span class="legend-label">${c.label}</span>
+    <span class="legend-count">${c.count}</span>`;
+  item.onclick = () => {
+    if (hiddenCommunities.has(c.cid)) {
+      hiddenCommunities.delete(c.cid);
+      item.classList.remove('dimmed');
+    } else {
+      hiddenCommunities.add(c.cid);
+      item.classList.add('dimmed');
+    }
+    const updates = RAW_NODES
+      .filter(n => n.community === c.cid)
+      .map(n => ({ id: n.id, hidden: hiddenCommunities.has(c.cid) }));
+    nodesDS.update(updates);
+  };
+  legendEl.appendChild(item);
+});
+</script>
+<script>
+// Render hyperedges as shaded regions
+const hyperedges = [{"id": "mckinsey_two_lens_value_analysis", "label": "McKinsey Two-Lens Value Analysis", "nodes": ["mckinsey_productivity_value", "mckinsey_use_case_lens", "mckinsey_work_activity_lens"], "relation": "form", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "raw/The economic potential of generative AI The next productivity frontier.md"}, {"id": "ibm_tech_ethics_by_design_flow", "label": "IBM Tech Ethics by Design Flow", "nodes": ["ibm_tech_ethics_by_design", "ibm_layers_of_effect", "ibm_dichotomy_mapping", "ibm_ethical_hacking"], "relation": "implement", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "graphify-out/transcripts/yt_87d60db59e61.txt"}, {"id": "openai_participatory_ai_governance", "label": "Participatory AI Governance", "nodes": ["openai_government_guardrails", "openai_equity_feedback_nudging", "openai_value_consensus_governance", "openai_love_humanity_alignment"], "relation": "participate_in", "confidence": "INFERRED", "confidence_score": 0.8, "source_file": "graphify-out/transcripts/yt_a1753a01ab1b.txt"}];
+// afterDrawing passes ctx already transformed to network coordinate space.
+// Draw node positions raw — no manual pan/zoom/DPR math needed.
+network.on('afterDrawing', function(ctx) {
+    hyperedges.forEach(h => {
+        const positions = h.nodes
+            .map(nid => network.getPositions([nid])[nid])
+            .filter(p => p !== undefined);
+        if (positions.length < 2) return;
+        ctx.save();
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = '#6366f1';
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Centroid and expanded hull in network coordinates
+        const cx = positions.reduce((s, p) => s + p.x, 0) / positions.length;
+        const cy = positions.reduce((s, p) => s + p.y, 0) / positions.length;
+        const expanded = positions.map(p => ({
+            x: cx + (p.x - cx) * 1.15,
+            y: cy + (p.y - cy) * 1.15
+        }));
+        ctx.moveTo(expanded[0].x, expanded[0].y);
+        expanded.slice(1).forEach(p => ctx.lineTo(p.x, p.y));
+        ctx.closePath();
+        ctx.fill();
+        ctx.globalAlpha = 0.4;
+        ctx.stroke();
+        // Label
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = '#4f46e5';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(h.label, cx, cy - 5);
+        ctx.restore();
+    });
+});
+</script>
+</body>
+</html>
