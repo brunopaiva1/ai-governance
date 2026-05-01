@@ -11,7 +11,7 @@
 
 ## Descrição do que foi feito no Projeto
 
-Atualmente, as regras de governaça em IA, na qual definem como sistemas de inteligência artificial devem ser desenvolvidos, usados e controlados de forma segura e responsável, encontram-se massivamente divididas em diferentes tipos de mídias que não seguem um formato padronizado, como por exemplos: artigos, vídeos, documentos técnicos e etc. Diante disso, encontramos o seguinte desafio técnico: como rastrear a influência real e a regra técnica de governança que deve ser considerada e aplicada?
+Atualmente, existe uma quantidade massiva e fragmentada de material discutindo os temas de ética em IA, inovação tecnológica e seus profundos impactos sociais e econômicos. Todo esse debate encontra-se disperso em fontes multimodais, como relatórios de mercado, vídeos e artigos acadêmicos densos. Diante da complexidade desse ecossistema e de como ele afeta a governança de dados, o nosso trabalho aborda o seguinte desafio principal: como rastrear a influência real entre os discursos de inovação e as regras de governança?
 
 Para adentrar nesse desafio, estabelecemos o objetivo de utilizar uma das duas ferramentas apresentadas em sala e definidas para o escopo desse projeto. Com isso, definimos o Graphify, por sua facilidade de manuseio e de entendimento do grupo, realizamos seu uso para identificar se a diversidade e inclusão impactam a produtividade e como resolver o dilema entre escala tecnológica e direitos éticos. 
 
@@ -43,3 +43,26 @@ Com base na execução do projeto, identificamos os seguintes pontos de melhoria
 * **Falta de Cronologia:** O mapeamento em grafos atual não demonstra com precisão a influência histórica (quem influenciou quem ao longo do tempo).
 * **Ruído no Pré-processamento:** Fontes de vídeo e áudio exigem uma limpeza de texto extremamente rigorosa; caso contrário, podem gerar "nós" irrelevantes que poluem a visualização.
 * **Simplificação de Nuance:** O grafo é uma representação estrutural e acaba simplificando relações complexas que os modelos de linguagem (como o NotebookLM) descrevem com muito mais tom crítico e nuance narrativa.
+
+## Estrutura do Repositório
+
+O projeto foi organizado separando os insumos de pesquisa, a documentação e os artefatos gerados pelo processamento de dados. A estrutura de diretórios é a seguinte:
+
+* **`artefatos/`**: Contém todos os materiais de base, documentação humana e insumos do projeto.
+  * **`docs/`**: Apresentação final do projeto estruturada em formatos PDF e PPTX.
+  * **`img/`**: Assets visuais utilizados no repositório (ex: banner.jpeg).
+  * **`prompts/`**: Documento com os prompts, grafo e analise.
+  * **`source/`**: Dados de origem, contendo os artigos de referência (`/artigos`) e a lista de URLs de vídeos analisados (`/link_videos`).
+
+* **`project/`**: Diretório dedicado à execução técnica e às saídas das pipelines.
+  * **`graphify-out/`**: Artefatos gerados pela extração de conhecimento via Graphify.
+    * **`transcripts/`**: Textos processados a partir dos vídeos.
+    * **`GRAPH_REPORT.md`**: Relatório em texto sumarizando as comunidades detectadas.
+    * **`graph.html`**: Artefato visual e interativo do Grafo de Conhecimento (pronto para visualização em navegador).
+    * **`graph.json`** e **`manifest.json`**: Dados topológicos e metadados estruturados da execução.
+  * **`raw/`**: Arquivos de dados brutos utilizados durante a fase de processamento da IA.
+
+* **Arquivos de Configuração**:
+  * `README.md`: Documentação principal e visão geral do projeto.
+  * `.gitignore`: Regras de exclusão de versionamento.
+  * `LICENSE`: Licença de uso e distribuição do repositório.
