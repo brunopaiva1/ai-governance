@@ -43,11 +43,3 @@ Com base na execução do projeto, identificamos os seguintes pontos de melhoria
 * **Falta de Cronologia:** O mapeamento em grafos atual não demonstra com precisão a influência histórica (quem influenciou quem ao longo do tempo).
 * **Ruído no Pré-processamento:** Fontes de vídeo e áudio exigem uma limpeza de texto extremamente rigorosa; caso contrário, podem gerar "nós" irrelevantes que poluem a visualização.
 * **Simplificação de Nuance:** O grafo é uma representação estrutural e acaba simplificando relações complexas que os modelos de linguagem (como o NotebookLM) descrevem com muito mais tom crítico e nuance narrativa.
-
-## Tarefas Realizadas pelo grupo:
-
-* **Bruno Paiva:** Estruturou e documentou o repositório no GitHub. Executou a comparação dos testes entre o Graphify e o NotebookLM, analisou o Grafo gerado, colaborou na criação dos slides e apresentou o trabalho.
-
-* **Manoel Neto:** Selecionou as fontes de pesquisa, executou a ferramenta Codex (Graphify) para gerar o Grafo e participou da análise dos resultados visuais. Colaborou na criação dos slides e apresentou o trabalho.
-
-* **Mariana Queiroz:** Selecionou as fontes de pesquisa, criou as perguntas (prompts) dos testes e comparou o desempenho entre as duas ferramentas. Participou da análise do Grafo, colaborou na criação dos slides e apresentou o trabalho.
