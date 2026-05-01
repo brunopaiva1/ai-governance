@@ -1,4 +1,4 @@
-![](artefatos/img/banner.jpeg)
+![](articats/img/banner.jpeg)
 
 # Governança e Ética de Dados em IA
 
@@ -48,7 +48,7 @@ Com base na execução do projeto, identificamos os seguintes pontos de melhoria
 
 O projeto foi organizado separando os insumos de pesquisa, a documentação e os artefatos gerados pelo processamento de dados. A estrutura de diretórios é a seguinte:
 
-* **`artefatos/`**: Contém todos os materiais de base, documentação humana e insumos do projeto.
+* **`artifacts/`**: Contém todos os materiais de base, documentação humana e insumos do projeto.
   * **`docs/`**: Apresentação final do projeto estruturada em formatos PDF e PPTX.
   * **`img/`**: Assets visuais utilizados no repositório (ex: banner.jpeg).
   * **`prompts/`**: Documento com os prompts, grafo e analise.
