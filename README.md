@@ -1,4 +1,4 @@
-![](img/banner.jpeg)
+![](artefatos/img/banner.jpeg)
 
 # Governança e Ética de Dados em IA
 
